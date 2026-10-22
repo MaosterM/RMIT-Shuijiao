@@ -57,7 +57,14 @@ Open **http://localhost:3000** and log in as one of the demo family members:
 4. As `limweijie`: **Request unlock** → **Approve** → **Open the vault**. It's blocked (1 of 2).
 5. As `limmeiling`: **Approve**. The vault unlocks and the will PDF opens.
 
-This quick start runs in **offline demo mode** (red banner: login and TideCloak encryption are simulated). To run with **real TideCloak** (Docker + Tide realm setup), follow **[SETUP.md](SETUP.md)**.
+This quick start runs in **offline demo mode** (red banner: login and TideCloak encryption are simulated).
+
+### Want the online version with real TideCloak?
+You're very welcome to try it. Follow **[SETUP.md](SETUP.md)** (Docker + one setup script, about 10–15 minutes). The app switches to real TideCloak automatically once the realm is set up; no code changes are needed.
+
+**Please note:** because of the outage described below, we could not test the online mode end to end. The setup steps were verified up to Tide's licence activation, and the TideCloak code follows the official `@tidecloak/nextjs` template (`TideCloakProvider`, `useTideCloak`, `doEncrypt` / `doDecrypt` with the template's `message` tag, `verifyTideCloakToken`). Small issues are still possible on first run, and Tide's network must be healthy when you try it.
+
+> **About our demo video:** it was recorded in offline demo mode. During the hackathon on 22 Oct 2026, Tide's network couldn't activate our TideCloak licence: the realm setup failed on Tide's side with *"not enough ORKs returned an ok response"* and Tide's node returned HTTP 503. This happened with several emails and on a clean network. The TideCloak integration (login, `doEncrypt` / `doDecrypt`, server-side token checks) is fully wired in the code. See [MOCKED.md](MOCKED.md).
 
 ## More
 

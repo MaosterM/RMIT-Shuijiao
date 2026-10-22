@@ -23,7 +23,7 @@ If TideCloak has not been provisioned (`app/tidecloak.json` has no `realm`), the
 
 **This mode is not secure.** It exists only so that the flow can be demonstrated when TideCloak can't be set up. Everything else (AES-GCM, Shamir splitting, RSA share passing, the ciphertext-only database, role checks, distinct approvals) runs the same code in both modes.
 
-**Why it exists:** during the hackathon (22 Oct 2026), the TideCloak realm initialisation (`npm run init` → `setUpTideRealm`) failed repeatedly on Tide's licensing service with `TIDE-IDPEXT-VENDOR-KEYGEN_FAILED` (`Midgard.FinalizeWallet` → HTTP 500). This happened with several licence emails, on a clean network. As soon as `npm run init` succeeds, the app automatically uses real TideCloak, with no code changes. **If the demo video shows the red OFFLINE DEMO MODE banner, the TideCloak parts in that video are simulated.**
+**Why it exists:** during the hackathon (22 Oct 2026), the TideCloak realm initialisation (`npm run init` → `setUpTideRealm`) failed repeatedly on Tide's side with `TIDE-IDPEXT-VENDOR-KEYGEN_FAILED` (`Midgard.FinalizeWallet` → HTTP 500, "Not enough orks returned an ok response"; Tide's node returned HTTP 503). This happened with several licence emails, on a clean network. As soon as `npm run init` succeeds, the app automatically uses real TideCloak, with no code changes. **If the demo video shows the red OFFLINE DEMO MODE banner, the TideCloak parts in that video are simulated.**
 
 ## SIMULATED / MOCKED
 

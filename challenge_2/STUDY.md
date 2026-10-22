@@ -43,7 +43,7 @@ The same flow in plain text: **seal → encrypt in browser → store ciphertext 
 - Shamir key splitting.
 - The fact that the database holds only ciphertext.
 
-**If the red "OFFLINE DEMO MODE" banner is showing:** TideCloak's licensing server failed during our setup, so login and `doEncrypt`/`doDecrypt` are simulated in that run. Say so plainly: "Tide's licence activation was down during the hackathon, so this recording uses our offline fallback. The TideCloak integration is wired in and switches on automatically once the realm is provisioned."
+**If the red "OFFLINE DEMO MODE" banner is showing:** TideCloak's licensing server failed during our setup, so login and `doEncrypt`/`doDecrypt` are simulated in that run. Say so plainly: "Tide's network was down during the hackathon (its nodes reported 'not enough ORKs'), so our demo uses the offline fallback. The TideCloak integration is wired in, and you're welcome to run the online version from our repo: it switches on automatically once the realm is set up." Bonus point to make: *even Tide's own network needs a quorum of nodes to agree, which is the same idea Zenithium applies to families.*
 
 **Simulated** (details in `MOCKED.md`):
 - **The quorum approval workflow ("SIMULATED QUORUM").** TideCloak's built-in quorum (change requests) approves *admin changes like role assignments*. TideCloak decryption is *self-only*: a user can decrypt only what they encrypted, so granting heirs a role can't open the planner's data. So *Zenithium* runs the approval steps. The vault key is still never held by Zenithium; it's split between the heirs.
