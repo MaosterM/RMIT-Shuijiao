@@ -124,3 +124,11 @@ export function combineShares(shares) {
 
 export const textBytes = (s) => enc.encode(s);
 export const bytesText = (b) => dec.decode(b);
+
+// Short, human-comparable fingerprint of an heir's public key (like Signal "safety numbers").
+// The planner compares it with the heir in person or by phone before sealing.
+export async function keyFingerprint(publicJwk) {
+  const digest = new Uint8Array(await subtle().digest("SHA-256", enc.encode(`${publicJwk.e}.${publicJwk.n}`)));
+  const hex = Array.from(digest.slice(0, 6), (b) => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+  return hex.match(/.{4}/g).join("-");
+}

@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useZenithium } from "../../lib/useZenithium";
 import { FAMILY, TIDE_TAG, displayName } from "../../lib/family";
-import { generateHeirKeypair, rsaEncrypt, rsaDecrypt, combineShares, aesDecrypt, aesDecryptText, fromB64 } from "../../lib/crypto";
+import { generateHeirKeypair, rsaEncrypt, rsaDecrypt, combineShares, aesDecrypt, aesDecryptText, keyFingerprint } from "../../lib/crypto";
 
 export default function VaultPage() {
   const { authenticated, login, role, name, username, api, doEncrypt, doDecrypt } = useZenithium();
@@ -12,12 +12,18 @@ export default function VaultPage() {
   const [busy, setBusy] = useState("");
   const [msg, setMsg] = useState(null);
   const [opened, setOpened] = useState(null); // { content, files: [{docType, name, url}] }
+  const [plan, setPlan] = useState(null);
+  const [myFp, setMyFp] = useState("");
 
   const refresh = useCallback(async () => {
     const [v, k] = await Promise.all([api("/api/vault"), api("/api/keys")]);
     setVault(v.vault);
     setUnlock(v.unlock);
     setKeys(k.keys);
+    const p = await api("/api/plan");
+    setPlan(p.plan);
+    const mine = k.keys[k.me?.username];
+    setMyFp(mine ? await keyFingerprint(mine.publicJwk) : "");
   }, [api]);
 
   // Live progress: poll every 3 seconds so approvals from another laptop show up.
@@ -131,7 +137,7 @@ export default function VaultPage() {
         </div>
         <p className="muted">
           Welcome, {name}. We're so sorry for your loss. What the person who passed away left for the family is kept safely sealed here. It opens only when {threshold} of{" "}
-          {FAMILY.heirs.length} of you agree, each from your own Tide account, so no one has to carry this alone.
+          {vault?.heirs?.length || plan?.heirs?.length || FAMILY.heirs.length} of you agree, each from your own Tide account, so no one has to carry this alone.
         </p>
         <p className="small muted">
           SIMULATED QUORUM: the approval workflow is run by Zenithium, not by TideCloak's own change-request quorum. The vault key itself is never held by
@@ -139,7 +145,30 @@ export default function VaultPage() {
         </p>
       </div>
 
-      {!myKey && (
+      {!vault && !plan?.heirs?.includes(username) && !myKey && (
+        <div className="card muted">{FAMILY.planner.name} hasn't named you as an heir yet. When he does, you'll be asked to set up your family key here.</div>
+      )}
+
+      {vault && !vault.heirs.includes(username) && (
+        <div className="card muted">You are not one of the heirs named in this vault, so there is nothing for you to open here.</div>
+      )}
+
+      {!myKey && plan?.heirs?.includes(username) && (
+        <div className="notice info">
+          <strong>{FAMILY.planner.name} has named you as one of his heirs.</strong> The vault will open when {plan.threshold} of {plan.heirs.length} heirs agree.
+          Please set up your family key below so he can seal the vault for you.
+        </div>
+      )}
+
+      {myKey && myFp && (
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Your family key</h3>
+          <p className="muted small">If {FAMILY.planner.name} asks, read him this code. He checks that it matches the one on his screen, so he knows this key is really yours.</p>
+          <p className="mono" style={{ fontSize: "1.3rem", letterSpacing: "0.08em" }}>{myFp}</p>
+        </div>
+      )}
+
+      {!myKey && (plan?.heirs?.includes(username) || vault?.heirs?.includes(username)) && (
         <div className="card">
           <h3>Step 1: set up your family key (one time)</h3>
           <p className="muted small">This creates your personal key in this browser and seals its private half with your Tide account, so only you can use it.</p>
@@ -149,7 +178,8 @@ export default function VaultPage() {
 
       {myKey && !vault && <div className="card muted">Your family key is ready. Nothing has been sealed for the family yet.</div>}
 
-      {myKey && vault && (
+
+      {myKey && vault && vault.heirs.includes(username) && (
         <div className="card">
           <h3>Unlock progress</h3>
           <div className="progressbar"><div style={{ width: `${Math.min(100, (approvals.length / threshold) * 100)}%` }} /></div>

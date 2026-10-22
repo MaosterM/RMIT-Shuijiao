@@ -119,18 +119,20 @@ The setup script (from the official TideCloak template) creates realm **`zenithi
 | `setUpTideRealm failed … SSL connection could not be established` | TideCloak can't reach Tide's network; switch networks (see Network note) |
 | `setUpTideRealm failed … KEYGEN_FAILED` / `FinalizeWallet 500` | Tide's licensing service failed. Delete the realm in the admin console (or `docker rm -f mytidecloak` and start again) and retry later. Meanwhile, use the offline demo (path A). |
 | Port 3000 or 8080 already in use | Stop the other program, or run `npm run dev -- -p 3001` (then also update `CLIENT_APP_URL` in `init/.env.example` before running the init) |
-| "Waiting for … to set up their family key" on the Seal page | Each heir must log in once and click **Set up my family key** on the Family Vault page before the planner can seal |
+| "Waiting for … to set up their family key" on the Seal page | The planner must name the heirs first (Step 1); then each heir logs in and clicks **Set up my family key** on the Family Vault page |
+| Seal button stays grey | Name heirs (Step 1), wait for both keys (Step 2 shows READY), tick **Yes, the codes match** for each heir, and fill in the will summary |
 
 ## Demo test script
 
 Use two browsers (or one normal and one private window) to act as different people.
 
-1. **Heir key setup (one time).** Log in as `limweijie` → **Family Vault** → **Set up my family key**. Log out, then do the same as `limmeiling`.
-2. **Planner seals the will.** Log in as `limahkow` → **Seal the Vault**. Fill in a will summary, an IC number and assets, choose a document type, attach a PDF (≤ 5 MB), then click **Encrypt and seal the vault**.
-3. **Database View.** Open **Database View**. Every sensitive field and document is ciphertext; only the document type, date and uploader are readable. *This is what an admin or attacker sees.*
-4. **Son tries alone.** Log in as `limweijie` → **Family Vault**. The badge shows **SEALED**. Click **Request unlock**, then **Approve unlock** (badge: **1 OF 2 APPROVED**), then **Open the vault**. It is **blocked**: "The vault stays sealed for now: 1 of 2 family approvals…".
-5. **Daughter approves** (second browser or laptop). Log in as `limmeiling` → **Family Vault** → **Approve unlock**. The progress bar updates live on both screens within 3 seconds, and the badge shows **UNLOCKED**.
-6. **Open.** Either heir clicks **Open the vault**. The will, IC and assets appear, and the PDF opens in a new browser tab.
+1. **Planner names his heirs.** Log in as `limahkow` → **Seal the Vault** → **Step 1**: tick Lim Wei Jie and Lim Mei Ling, choose **2 of 2** → **Name my heirs**.
+2. **Heirs set up their family keys.** Log in as `limweijie` → **Family Vault**. It says *"Mr Lim Ah Kow has named you as one of his heirs"* → **Set up my family key** and note the code (fingerprint). Do the same as `limmeiling` in another browser.
+3. **Planner confirms and seals.** As `limahkow` → **Step 2**: both heirs show **READY** with their codes; compare them and tick **Yes, the codes match**. **Step 3**: fill in a will summary, an IC number and assets, choose a document type, attach a PDF (≤ 5 MB), then click **Encrypt and seal the vault**.
+4. **Database View.** Open **Database View**. Every sensitive field and document is ciphertext; only the document type, date and uploader are readable. *This is what an admin or attacker sees.*
+5. **Son tries alone.** Log in as `limweijie` → **Family Vault**. The badge shows **SEALED**. Click **Request unlock**, then **Approve unlock** (badge: **1 OF 2 APPROVED**), then **Open the vault**. It is **blocked**: "The vault stays sealed for now: 1 of 2 family approvals…".
+6. **Daughter approves** (second browser or laptop). Log in as `limmeiling` → **Family Vault** → **Approve unlock**. The progress bar updates live on both screens within 3 seconds, and the badge shows **UNLOCKED**.
+7. **Open.** Either heir clicks **Open the vault**. The will, IC and assets appear, and the PDF opens in a new browser tab.
 
 To demo on two laptops, run the app on one machine and open `http://<that-machine's-IP>:3000` on the other. You must then also add that URL to the client's redirect URIs and web origins in the TideCloak admin console. Two browsers on one laptop is simpler.
 

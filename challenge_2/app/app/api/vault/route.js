@@ -20,12 +20,14 @@ export async function POST(request) {
   const body = await request.json();
   const { plannerCopy, content, files = [], shares, threshold } = body || {};
   if (!plannerCopy || !content?.ct || !Array.isArray(shares)) return deny(400, "Missing sealed fields");
-  const heirs = FAMILY.heirs.map((h) => h.username);
-  if (shares.length !== heirs.length || !shares.every((s) => heirs.includes(s.heir))) return deny(400, "One key share per heir is required");
-  if (!(threshold >= 1 && threshold <= heirs.length)) return deny(400, "Invalid threshold");
+  const db = await readDb();
+  // Seal exactly for the heirs the planner named (step 1), with the threshold he chose.
+  if (!db.plan) return deny(400, "Please name your heirs first");
+  const heirs = db.plan.heirs.filter((h) => FAMILY.heirs.some((f) => f.username === h));
+  if (shares.length !== heirs.length || !shares.every((s) => heirs.includes(s.heir))) return deny(400, "One key share per named heir is required");
+  if (threshold !== db.plan.threshold || !(threshold >= 1 && threshold <= heirs.length)) return deny(400, "Invalid threshold");
   if (files.some((f) => !f.body?.ct || f.sizeBytes > 5 * 1024 * 1024)) return deny(400, "Invalid file (max 5 MB)");
 
-  const db = await readDb();
   db.vault = {
     id: `vault_${Date.now()}`,
     sealedBy: user.username,

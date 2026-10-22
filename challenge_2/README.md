@@ -50,12 +50,13 @@ Open **http://localhost:3000** and log in as one of the demo family members:
 | Lim Wei Jie (son) | `limweijie` | heir: requests and approves |
 | Lim Mei Ling (daughter) | `limmeiling` | heir: approves |
 
-**Try it** (use two browser windows to be two people at once):
-1. As each heir, open **Family Vault** → **Set up my family key**.
-2. As `limahkow`, open **Seal the Vault** → fill in the form, attach a PDF → **Encrypt and seal**.
-3. Open **Database View** to see that everything is ciphertext.
-4. As `limweijie`: **Request unlock** → **Approve** → **Open the vault**. It's blocked (1 of 2).
-5. As `limmeiling`: **Approve**. The vault unlocks and the will PDF opens.
+**Try it** (use three separate browser sessions, e.g. Chrome, Chrome incognito and Edge, so each person stays logged in):
+1. As `limahkow`: **Seal the Vault** → **Step 1**: tick Wei Jie and Mei Ling, 2 of 2 → **Name my heirs**.
+2. As each heir: **Family Vault** shows *"Mr Lim Ah Kow has named you…"* → **Set up my family key** → note the code shown.
+3. As `limahkow`: **Step 2**: check that each heir's code matches → tick **Yes, the codes match** → **Step 3**: fill in the form, attach a PDF → **Encrypt and seal the vault**.
+4. Open **Database View** to see that everything is ciphertext.
+5. As `limweijie`: **Request unlock** → **Approve unlock** → **Open the vault**. It's blocked (1 of 2).
+6. As `limmeiling`: **Approve unlock**. The vault unlocks and the will PDF opens.
 
 This quick start runs in **offline demo mode** (red banner: login and TideCloak encryption are simulated).
 
