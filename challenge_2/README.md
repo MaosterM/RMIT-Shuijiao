@@ -1,0 +1,70 @@
+# Zenithium 🌿
+### Your family's wishes, kept safe together
+
+**RMIT Hackathon 2026 · Challenge 2: "Build Without Blind Trust: Vibe coding with TideCloak"**
+**Team ShuijiaoT07 · Taylor's University Malaysia**
+
+---
+
+## Introduction
+
+Losing someone you love is hard enough. Afterwards, the papers they leave behind, such as their will, MyKad, land titles and savings, usually sit with **one person, one law firm or one company**, and the family simply has to trust them. That's where documents go missing, one relative ends up in control, and families fall into disputes.
+
+**Zenithium** keeps those documents gently sealed so that **no single party can open them**: not our admins, not the database host, not any one family member. They open only when the **family agrees together**, with each heir approving from their own Tide account.
+
+| 🔒 Admin can't read | 🤝 No single heir can unlock | 🌿 Encrypted before it leaves your device |
+|---|---|---|
+| Our database holds only scrambled text. Even we can't read your loved one's will. | The vault key is split between the heirs. It takes 2 of 2 to open it. | Words and documents are sealed in your browser, with TideCloak guarding the keys. |
+
+## The brief
+
+> *"A working app without unilateral control over protected data or decisions."* (Challenge 2, RMIT Hackathon 2026)
+
+Our answer for estate settlement in Malaysia:
+
+1. **The planner** (Mr Lim Ah Kow) writes a will summary, IC number and asset list, and attaches documents (PDF/JPG/PNG).
+2. Everything is **encrypted in the browser** with TideCloak and AES-GCM before it is saved. The **Database View** shows that the server only stores ciphertext.
+3. After he passes away, **his heirs** (son Lim Wei Jie and daughter Lim Mei Ling) can request to open the vault. **One heir alone is blocked.** When both approve, the vault opens and the will PDF can be read, by the family only.
+
+**Built with:** Next.js 16 · TideCloak (`@tidecloak/nextjs`: login, `doEncrypt` / `doDecrypt`) · WebCrypto (AES-GCM, RSA-OAEP) · Shamir secret sharing.
+**Impact:** SDG 16 (fair, dispute-free estate processes) · SDG 1 (heirs can claim what's theirs) · SDG 5 (widows and elderly spouses get an equal say).
+
+> **Honesty note:** some parts are simulated, including the **quorum approval workflow** (run by our app, though the key never leaves the heirs) and death verification. If TideCloak isn't set up, the app runs in a clearly labelled **offline demo mode**. Full details are in [MOCKED.md](MOCKED.md).
+
+## How to run
+
+You only need **[Node.js](https://nodejs.org) 20 or 22**.
+
+```bash
+git clone <this-repo-url>
+cd <repo>/challenge_2/app
+npm install
+npm run dev
+```
+
+Open **http://localhost:3000** and log in as one of the demo family members:
+
+| Who | Username | What they do |
+|---|---|---|
+| Mr Lim Ah Kow | `limahkow` | seals the vault |
+| Lim Wei Jie (son) | `limweijie` | heir: requests and approves |
+| Lim Mei Ling (daughter) | `limmeiling` | heir: approves |
+
+**Try it** (use two browser windows to be two people at once):
+1. As each heir, open **Family Vault** → **Set up my family key**.
+2. As `limahkow`, open **Seal the Vault** → fill in the form, attach a PDF → **Encrypt and seal**.
+3. Open **Database View** to see that everything is ciphertext.
+4. As `limweijie`: **Request unlock** → **Approve** → **Open the vault**. It's blocked (1 of 2).
+5. As `limmeiling`: **Approve**. The vault unlocks and the will PDF opens.
+
+This quick start runs in **offline demo mode** (red banner: login and TideCloak encryption are simulated). To run with **real TideCloak** (Docker + Tide realm setup), follow **[SETUP.md](SETUP.md)**.
+
+## More
+
+| File | What's inside |
+|---|---|
+| [SETUP.md](SETUP.md) | full setup with TideCloak, troubleshooting, how it works |
+| [MOCKED.md](MOCKED.md) | everything that is simulated |
+| [STUDY.md](STUDY.md) | plain-English guide and judge Q&A |
+| [video_script.md](video_script.md) | 2-minute demo script |
+| `summary.docx` | 1-page project summary |
